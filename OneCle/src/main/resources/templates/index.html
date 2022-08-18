@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/layout}">
+
+<head>
+	<meta charset="UTF-8">
+	<title>콕션</title>
+
+	<th:block layout:fragment="css">
+		<link rel="stylesheet" th:href="@{/css/style_home.css}">
+	</th:block>
+
+	<th:block layout:fragment="script">
+		<script>
+			//상품 별 잔여시간 계산
+							function restTime(e) {
+					            var now = new Date();
+					            var end = new Date($(e).attr("enddate"));
+					
+								var today = new Date().getTime();
+					            var gap = end - today;
+					            var day = (Math.ceil(gap / (1000 * 60 * 60 * 24)))-1;
+					            var hour = Math.ceil((gap % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))-1;
+					            var min = Math.ceil((gap % (1000 * 60 * 60)) / (1000 * 60))-1;
+					            var sec = Math.ceil((gap % (1000 * 60)) / 1000);
+					            
+					            if (day >= 1) {
+					                $(e).text("남은시간 : " + day + "일 " + hour + "시간 " + min + "분");
+					            } else {
+					                $(e).text("남은시간 : " + hour + "시간 " + min + "분 " + sec + "초");
+					            }
+					        }
+					        $(function() {
+					            setInterval(function(){
+					                $(".timer").each(function(i,e){
+										 restTime(e); 
+						            })
+						        },1000);
+						        $("#sc_btn").on("click", function(){
+									//$("input[name='page']").val('0');
+									searchForm.submit();
+								});
+					        });
+		</script>
+	</th:block>
+
+</head>
+
+<body>
+	<header th:replace="./fragments/header.html :: header"></header>
+
+	</header>
+	<main>
+		<div layout:fragment="banner" class="top-slide">
+			<div class="carousel slide" data-bs-ride="carousel" id="banner">
+				<div class="carousel-indicators">
+					<button type="button" data-bs-target="#banner" data-bs-slide-to="0" class="active"></button>
+					<button type="button" data-bs-target="#banner" data-bs-slide-to="1"></button>
+					<button type="button" data-bs-target="#banner" data-bs-slide-to="2"></button>
+				</div>
+				<div class="carousel-inner">
+					<div class="carousel-item active">
+						<img src="/images/banner2.png" width="100%" height="200px" alt="배너1" style="cursor:pointer">
+					</div>
+					<div class="carousel-item">
+						<img src="/images/banner01.gif" loop=infinite width="100%" height="200px" alt="배너2"
+							style="cursor:pointer">
+					</div>
+					<div class="carousel-item">
+						<img src="/images/banner3.png" width="100%" height="200px" alt="배너3" style="cursor:pointer">
+					</div>
+				</div>
+				<a href="#banner" class="carousel-control-prev" data-bs-slide="prev">
+					<span class="carousel-control-prev-icon"></span>
+				</a>
+				<a href="#banner" class="carousel-control-next" data-bs-slide="next">
+					<span class="carousel-control-next-icon"></span>
+				</a>
+			</div>
+		</div>
+	</main>
+	<div class="wrap">
+		<div class="home1" layout:fragment="content">
+			<div class="hot_prod">
+				<p id="hot_title">베스트 핫딜</p>
+				<div class="step_wrap">
+					<div class="hot_prod_list_1 hotlist" th:each="item:${hotProcList}">
+						<a th:href="@{/item/searchItem/{itemNo}(itemNo=${item.itemNo})}">
+							<div class="img-box">
+								<img th:if="${item.itemFile ne null}"
+									th:src="@{/upload/}+${item.itemFile.itemfileNm}"
+									style="width:284px; max-width:100%; height:180px; max-height:250px;"/>
+								<img th:if="${item.itemFile eq null}"
+										th:src="@{/upload/noimg.png}"/>	
+							</div>
+						</a>
+						<div class="con-box">
+							<dl>
+								<dt th:text="${item.itemNm}"></dt>
+								<dd style="min-height:40px;">
+									<table>
+										<tr>
+											<td><b>경매가</b></td>
+											<td th:text="${#numbers.formatInteger(item.itemStPrice, 3, 'COMMA') + '원'}"></td>
+										</tr>
+										<tr>
+											<td id="pr_name"><b>입찰수</b></td>
+											<td>2</td>
+										</tr>
+										<tr>
+											<td id="pr_name"><b>조회수</b></td>
+											<td th:text="${item.itemCnt}">17,111</td>
+										</tr>
+
+									</table>
+
+								</dd>
+								<p colspan="2" class="timer" th:enddate="${item.itemEnddate}"></p>
+							</dl>
+						</div>
+					</div>
+					
+				</div>
+			</div> 
+
+			<div class="fin_prod">
+				<p id="fin_title">마감임박 상품</p>
+				<div class="step_wrap">
+					<div class="fin_prod_list_1 finlist" th:each="item:${endProcList}">
+						<a th:href="@{/item/searchItem/{itemNo}(itemNo=${item.itemNo})}">
+							<div class="img-box">
+								<img th:if="${item.itemFile ne null}"
+									th:src="@{/upload/}+${item.itemFile.itemfileNm}"
+									style="width:284px; max-width:100%; height:180px; max-height:250px;"/>
+								<img th:if="${item.itemFile eq null}"
+										th:src="@{/upload/noimg.png}"/>	
+						</div>
+						</a>
+						<div class="con-box">
+							<dl>
+								<dt th:text="${item.itemNm}">네이처 하이크 에어텐트</dt>
+								<dd style="min-height:40px;">
+									<table>
+										<tr>
+											<td id="pr_name"><b>경매가</b></td>
+											<td th:text="${#numbers.formatInteger(item.itemStPrice, 3, 'COMMA') + '원'}"></td>
+										</tr>
+										<tr>
+											<td id="pr_name"><b>입찰수</b></td>
+											<td>5</td>
+										</tr>
+										<tr>
+											<td id="pr_name"><b>조회수</b></td>
+											<td th:text="${item.itemCnt}">4,764</td>
+										</tr>
+
+									</table>
+
+								</dd>
+								<p colspan="2" class="timer" th:enddate="${item.itemEnddate}"></p>
+							</dl>
+						</div>
+					</div>
+					<!-- <div class="fin_prod_list_2 finlist">
+						<div class="img-box">
+							<img src="/images/후리스.png"
+								style="width:auto; max-width:100%; height:auto; max-height:250px;">
+						</div>
+						<div class="con-box">
+							<dl>
+								<dt>블랙야크 남여공용 후리스</dt>
+								<dd style="min-height:40px;">
+									<table>
+										<tr>
+											<td id="pr_name"><b>경매가</b></td>
+											<td>39,050원</td>
+										</tr>
+										<tr>
+											<td id="pr_name"><b>입찰수</b></td>
+											<td>645</td>
+										</tr>
+										<tr>
+											<td id="pr_name"><b>관심수</b></td>
+											<td>2,153</td>
+										</tr>
+										<tr>
+											<td id="pr_name"><b>조회수</b></td>
+											<td>45,975</td>
+										</tr>
+
+									</table>
+
+								</dd>
+								<p class="timer" colspan="2" data-end-time="2022-08-06T17:27:00+09:00"></p>
+							</dl>
+						</div>
+					</div>
+					<div class="fin_prod_list_3 finlist">
+						<div class="img-box">
+							<img src="/images/자전거.png"
+								style="width:auto; max-width:100%; height:auto; max-height:250px;">
+						</div>
+						<div class="con-box">
+							<dl>
+								<dt>2022 벤조 전기자전거</dt>
+								<dd style="min-height:40px;">
+									<table>
+										<tr>
+											<td id="pr_name"><b>경매가</b></td>
+											<td>960,000원</td>
+										</tr>
+										<tr>
+											<td id="pr_name"><b>입찰수</b></td>
+											<td>7</td>
+										</tr>
+										<tr>
+											<td id="pr_name"><b>관심수</b></td>
+											<td>69</td>
+										</tr>
+										<tr>
+											<td id="pr_name"><b>조회수</b></td>
+											<td>11,467</td>
+										</tr>
+
+									</table>
+
+								</dd>
+								<p class="timer" colspan="2" data-end-time="2022-08-03T18:30:00+09:00"></p>
+							</dl>
+						</div>
+					</div> -->
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>
