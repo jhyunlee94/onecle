@@ -13,7 +13,7 @@ const Header = () => {
       {/* Navbar부분 */}
       <Navbar bg="dark" variant="dark">
         <Container>
-          <Navbar.Brand href="/">OneCle</Navbar.Brand>
+          <Navbar.Brand href="/">베어봄</Navbar.Brand>
           <Nav className="justify-content-start">
             <Nav.Link
               onClick={() => {
